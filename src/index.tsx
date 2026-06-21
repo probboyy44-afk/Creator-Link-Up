@@ -8,7 +8,7 @@ app.use('/api/*', cors())
 /* ----------------------------- Data ----------------------------- */
 
 const stats = [
-  { id: 'creators', label: 'Total Creators', value: 4200, suffix: '+' },
+  { id: 'creators', label: 'Creators Worldwide', value: 4200, suffix: '+' },
   { id: 'campaigns', label: 'Campaigns Managed', value: 860, suffix: '+' },
   { id: 'reach', label: 'Audience Reach', value: 1.4, suffix: 'B', decimals: 1 },
   { id: 'brands', label: 'Brand Partnerships', value: 320, suffix: '+' }
@@ -19,7 +19,7 @@ const services = [
   { icon: 'fa-bullseye', title: 'Full Campaign Management', desc: 'From creative briefs to final reporting — we run the entire campaign.' },
   { icon: 'fa-chess-knight', title: 'Influencer Marketing Strategy', desc: 'Data-driven strategy engineered for maximum reach and resonance.' },
   { icon: 'fa-pen-ruler', title: 'Custom Campaign Plans', desc: 'Bespoke campaign architecture tailored to each brand’s objectives.' },
-  { icon: 'fa-globe', title: 'India & UK Creator Network', desc: 'A vetted cross-border roster spanning two of the most vibrant markets.' },
+  { icon: 'fa-globe', title: 'Worldwide Creator Network', desc: 'A vetted global roster spanning every major market and platform.' },
   { icon: 'fa-car-side', title: 'GTA Content Creators', desc: 'Specialist roleplay & GTA creators with deeply engaged communities.' },
   { icon: 'fa-gamepad', title: 'Gaming Creators', desc: 'Top-tier gaming talent across streaming, shorts and long-form.' },
   { icon: 'fa-street-view', title: 'IRL Creators', desc: 'Lifestyle, vlog and IRL creators that turn moments into movements.' },
@@ -28,18 +28,18 @@ const services = [
 ]
 
 const creators = [
-  { name: 'Aarav Mehta', handle: '@aaravplays', category: 'Gaming', followers: '2.1M', country: 'IN', img: '/static/img/creator-1.svg' },
-  { name: 'Lola Hart', handle: '@lolahart', category: 'IRL', followers: '1.6M', country: 'UK', img: '/static/img/creator-2.svg' },
-  { name: 'Dev Khanna', handle: '@devgta', category: 'GTA', followers: '980K', country: 'IN', img: '/static/img/creator-3.svg' },
-  { name: 'Maya Cole', handle: '@mayacole', category: 'Lifestyle', followers: '1.2M', country: 'UK', img: '/static/img/creator-4.svg' },
-  { name: 'Rohan Iyer', handle: '@rohanrp', category: 'GTA', followers: '740K', country: 'IN', img: '/static/img/creator-5.svg' },
-  { name: 'Zoe Bennett', handle: '@zoeb', category: 'Lifestyle', followers: '2.4M', country: 'UK', img: '/static/img/creator-6.svg' }
+  { name: 'SenpaiSpider', handle: '@SenpaiSpider', category: 'Minecraft', followers: '2.51M', img: '/static/img/creators/senpaispider.jpg' },
+  { name: 'Psd1', handle: '@Psd1', category: 'Gaming', followers: '1.09M', img: '/static/img/creators/psd1.jpg' },
+  { name: 'Stevee', handle: '@Stevee', category: 'Gaming', followers: '244K', img: '/static/img/creators/stevee.jpg' },
+  { name: 'Fynox', handle: '@Fynox', category: 'Gaming', followers: '164K', img: '/static/img/creators/fynox.jpg' },
+  { name: 'Triggered Boy', handle: '@TriggeredBoy', category: 'Minecraft', followers: '135K', img: '/static/img/creators/triggeredboy.jpg' },
+  { name: 'Its Water', handle: '@ItsWater', category: 'Minecraft', followers: '29.8K', img: '/static/img/creators/itswater.jpg' }
 ]
 
 const voiceTestimonials = [
   { name: 'Priya Nair', role: 'Lifestyle Creator · 1.8M', img: '/static/img/voice-1.svg', audio: '/static/audio/voice-1.mp3', quote: 'They unlocked brand deals I never thought were possible.' },
   { name: 'James Whitlock', role: 'Gaming Creator · 920K', img: '/static/img/voice-2.svg', audio: '/static/audio/voice-2.mp3', quote: 'The most professional agency I have ever worked with.' },
-  { name: 'Anaya Singh', role: 'IRL Creator · 3.1M', img: '/static/img/voice-3.svg', audio: '/static/audio/voice-3.mp3', quote: 'Every campaign felt premium from start to finish.' }
+  { name: 'Anaya Singh', role: 'Minecraft Creator · 3.1M', img: '/static/img/voice-3.svg', audio: '/static/audio/voice-3.mp3', quote: 'Every campaign felt premium from start to finish.' }
 ]
 
 const brandTestimonials = [
@@ -52,18 +52,24 @@ const brandTestimonials = [
 ]
 
 const caseStudies = [
-  { title: 'NovaTech Global Launch', metric: '312%', metricLabel: 'Engagement Lift', tags: ['Tech', 'IN + UK'], desc: 'A 40-creator synchronized launch across two markets in 21 days.' },
-  { title: 'Drift Motors GTA Takeover', metric: '12M', metricLabel: 'Organic Views', tags: ['GTA', 'Gaming'], desc: 'An immersive in-game brand world built with roleplay creators.' },
-  { title: 'PulseFit Transformation', metric: '4.8x', metricLabel: 'Return on Ad Spend', tags: ['Fitness', 'IRL'], desc: 'Long-form IRL storytelling that converted at scale.' }
+  { title: 'NovaTech Global Launch', metric: '312%', metricLabel: 'Engagement Lift', tags: ['Tech', 'Worldwide'], desc: 'A 40-creator synchronized launch across 6 countries in 21 days.' },
+  { title: 'Drift Motors Gaming Takeover', metric: '12M', metricLabel: 'Organic Views', tags: ['Gaming', 'Minecraft'], desc: 'An immersive in-game brand world built with top gaming creators.' },
+  { title: 'PulseFit Transformation', metric: '4.8x', metricLabel: 'Return on Ad Spend', tags: ['Fitness', 'IRL'], desc: 'Long-form storytelling across global creators that converted at scale.' }
 ]
 
 const networkNodes = [
-  { city: 'Mumbai', country: 'IN', lat: 19.07, lon: 72.87 },
-  { city: 'Delhi', country: 'IN', lat: 28.61, lon: 77.20 },
-  { city: 'Bengaluru', country: 'IN', lat: 12.97, lon: 77.59 },
-  { city: 'London', country: 'UK', lat: 51.50, lon: -0.12 },
-  { city: 'Manchester', country: 'UK', lat: 53.48, lon: -2.24 },
-  { city: 'Birmingham', country: 'UK', lat: 52.48, lon: -1.90 }
+  { city: 'Mumbai', country: 'IN', lat: 19.07, lon: 72.87, hub: true },
+  { city: 'London', country: 'UK', lat: 51.50, lon: -0.12, hub: true },
+  { city: 'New York', country: 'US', lat: 40.71, lon: -74.0, hub: true },
+  { city: 'Los Angeles', country: 'US', lat: 34.05, lon: -118.24 },
+  { city: 'São Paulo', country: 'BR', lat: -23.55, lon: -46.63 },
+  { city: 'Tokyo', country: 'JP', lat: 35.68, lon: 139.69 },
+  { city: 'Sydney', country: 'AU', lat: -33.87, lon: 151.21 },
+  { city: 'Dubai', country: 'AE', lat: 25.20, lon: 55.27 },
+  { city: 'Berlin', country: 'DE', lat: 52.52, lon: 13.40 },
+  { city: 'Toronto', country: 'CA', lat: 43.65, lon: -79.38 },
+  { city: 'Singapore', country: 'SG', lat: 1.35, lon: 103.82 },
+  { city: 'Lagos', country: 'NG', lat: 6.52, lon: 3.38 }
 ]
 
 /* ----------------------------- API ----------------------------- */
@@ -119,6 +125,7 @@ const PAGE = `<!DOCTYPE html>
     </div>
   </div>
 
+  <div id="cursor-glow" class="cursor-glow"></div>
   <canvas id="bg-canvas"></canvas>
   <div id="globe-stage"></div>
 
@@ -132,7 +139,10 @@ const PAGE = `<!DOCTYPE html>
       <a href="#network">Network</a>
       <a href="#cases">Stories</a>
     </nav>
-    <a href="#contact" class="nav-cta">Start Your Campaign</a>
+    <div class="nav-actions">
+      <a href="https://discord.gg/eKaGpD6r8Z" target="_blank" rel="noopener" class="nav-discord" aria-label="Discord"><i class="fab fa-discord"></i></a>
+      <a href="#contact" class="nav-cta">Start Your Campaign</a>
+    </div>
     <button class="nav-burger" id="navBurger" aria-label="Menu"><span></span><span></span><span></span></button>
   </header>
 
@@ -140,16 +150,26 @@ const PAGE = `<!DOCTYPE html>
     <!-- HERO -->
     <section id="hero" class="section hero">
       <div class="hero-inner">
-        <div class="eyebrow reveal"><span class="dot"></span> India &nbsp;·&nbsp; United Kingdom &nbsp;·&nbsp; Influencer Marketing</div>
+        <div class="eyebrow reveal"><span class="dot"></span> Worldwide &nbsp;·&nbsp; Influencer Marketing &nbsp;·&nbsp; Est. Creators</div>
         <h1 class="hero-title">
           <span class="reveal">Connecting Brands</span>
           <span class="reveal">With <em>Exceptional</em></span>
           <span class="reveal grad">Creators</span>
         </h1>
-        <p class="hero-sub reveal">We architect and run complete influencer campaigns — from strategy to execution — pairing visionary brands with the most influential creators across two continents.</p>
+        <p class="hero-sub reveal">We architect and run complete influencer campaigns — from strategy to execution — pairing visionary brands with the most influential creators <strong>across the globe</strong>.</p>
         <div class="hero-cta reveal">
           <a href="#contact" class="btn btn-primary"><i class="fas fa-rocket"></i> Start Your Campaign</a>
           <a href="#creators" class="btn btn-ghost"><i class="fas fa-star"></i> Join As Creator</a>
+        </div>
+        <div class="hero-trust reveal">
+          <div class="hero-trust-avatars">
+            <img src="/static/img/creators/senpaispider.jpg" alt="SenpaiSpider" />
+            <img src="/static/img/creators/psd1.jpg" alt="Psd1" />
+            <img src="/static/img/creators/fynox.jpg" alt="Fynox" />
+            <img src="/static/img/creators/stevee.jpg" alt="Stevee" />
+            <img src="/static/img/creators/triggeredboy.jpg" alt="Triggered Boy" />
+          </div>
+          <span class="hero-trust-text">Trusted by <strong>4,200+</strong> creators worldwide</span>
         </div>
       </div>
       <div class="scroll-hint"><span>Scroll to explore</span><i class="fas fa-chevron-down"></i></div>
@@ -175,14 +195,14 @@ const PAGE = `<!DOCTYPE html>
       <div class="section-head">
         <span class="kicker">The Roster</span>
         <h2 class="section-title">Featured <span class="grad">Creators</span></h2>
-        <p class="section-lead">Gaming, GTA, IRL and Lifestyle talent with deeply engaged audiences.</p>
+        <p class="section-lead">Gaming, Minecraft, GTA and IRL talent with deeply engaged, loyal audiences.</p>
       </div>
       <div class="filter-bar" id="creatorFilters">
         <button class="filter-chip active" data-cat="All">All</button>
         <button class="filter-chip" data-cat="Gaming">Gaming</button>
+        <button class="filter-chip" data-cat="Minecraft">Minecraft</button>
         <button class="filter-chip" data-cat="GTA">GTA</button>
         <button class="filter-chip" data-cat="IRL">IRL</button>
-        <button class="filter-chip" data-cat="Lifestyle">Lifestyle</button>
       </div>
       <div class="creators-grid" id="creatorsGrid"></div>
     </section>
@@ -221,10 +241,20 @@ const PAGE = `<!DOCTYPE html>
     <section id="network" class="section network">
       <div class="section-head">
         <span class="kicker">The Network</span>
-        <h2 class="section-title">India &amp; UK <span class="grad">creator map</span></h2>
-        <p class="section-lead">Live connections between brands and creators across both markets.</p>
+        <h2 class="section-title">Worldwide <span class="grad">creator map</span></h2>
+        <p class="section-lead">Live connections between brands and creators across every continent — we work worldwide.</p>
       </div>
-      <div class="network-stage"><div id="network-globe"></div></div>
+      <div class="network-stage">
+        <div id="network-globe"></div>
+        <div id="network-label" class="network-label"></div>
+        <div class="network-legend">
+          <span><i class="dot hub"></i> Brand Hubs</span>
+          <span><i class="dot c1"></i> Creators</span>
+          <span><i class="dot c2"></i> Live Links</span>
+        </div>
+        <div class="network-hint"><i class="fas fa-arrows-up-down-left-right"></i> Drag to explore the network</div>
+        <div class="network-badge"><span class="grad">12+</span> markets · <span class="grad">6</span> continents</div>
+      </div>
     </section>
 
     <!-- CASE STUDIES -->
@@ -242,12 +272,22 @@ const PAGE = `<!DOCTYPE html>
         <div class="contact-copy">
           <span class="kicker">Let's Build</span>
           <h2 class="section-title">Start your <span class="grad">campaign</span></h2>
-          <p class="section-lead">Tell us about your brand or creator goals. Our team replies within 24 hours.</p>
+          <p class="section-lead">Tell us about your brand or creator goals. Our team replies within 24 hours — we work with brands and creators worldwide.</p>
           <ul class="contact-points">
             <li><i class="fas fa-circle-check"></i> Dedicated strategist</li>
-            <li><i class="fas fa-circle-check"></i> Vetted India &amp; UK roster</li>
+            <li><i class="fas fa-circle-check"></i> Vetted worldwide creator roster</li>
             <li><i class="fas fa-circle-check"></i> Transparent performance reporting</li>
           </ul>
+          <div class="contact-channels">
+            <a class="contact-channel" href="mailto:support@creatorlinkup.in">
+              <span class="cc-icon"><i class="fas fa-envelope"></i></span>
+              <span class="cc-text"><span class="cc-label">Email us</span><span class="cc-value">support@creatorlinkup.in</span></span>
+            </a>
+            <a class="contact-channel discord" href="https://discord.gg/eKaGpD6r8Z" target="_blank" rel="noopener">
+              <span class="cc-icon"><i class="fab fa-discord"></i></span>
+              <span class="cc-text"><span class="cc-label">Join our Discord</span><span class="cc-value">discord.gg/eKaGpD6r8Z</span></span>
+            </a>
+          </div>
         </div>
         <form class="contact-form" id="contactForm">
           <div class="field"><input type="text" id="cf-name" required placeholder=" " /><label>Your name</label></div>
@@ -264,12 +304,16 @@ const PAGE = `<!DOCTYPE html>
   <footer class="footer">
     <div class="footer-top">
       <a href="#hero" class="nav-logo">CREATOR<span>LINK UP</span></a>
-      <p>Connecting brands with exceptional creators across India &amp; the UK.</p>
+      <p>Connecting brands with exceptional creators — worldwide.</p>
+      <div class="footer-contact">
+        <a href="mailto:support@creatorlinkup.in"><i class="fas fa-envelope"></i> support@creatorlinkup.in</a>
+        <a href="https://discord.gg/eKaGpD6r8Z" target="_blank" rel="noopener"><i class="fab fa-discord"></i> Join Discord</a>
+      </div>
       <div class="footer-social">
+        <a href="https://discord.gg/eKaGpD6r8Z" target="_blank" rel="noopener" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        <a href="mailto:support@creatorlinkup.in" aria-label="Email"><i class="fas fa-envelope"></i></a>
         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
     <div class="footer-bottom"><span>© ${new Date().getFullYear()} Creator Link Up. All rights reserved.</span></div>

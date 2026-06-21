@@ -146,6 +146,20 @@
     });
   }
 
+  /* ---------------- Cursor glow ---------------- */
+  (function cursorGlow() {
+    const g = document.getElementById('cursor-glow');
+    if (!g || window.matchMedia('(hover:none)').matches) return;
+    let gx = window.innerWidth / 2, gy = window.innerHeight / 2, tx = gx, ty = gy;
+    window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; g.classList.add('on'); });
+    window.addEventListener('mouseleave', () => g.classList.remove('on'));
+    (function follow() {
+      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;
+      g.style.transform = `translate(${gx}px,${gy}px) translate(-50%,-50%)`;
+      requestAnimationFrame(follow);
+    })();
+  })();
+
   /* ---------------- Nav ---------------- */
   const nav = document.getElementById('nav');
   const burger = document.getElementById('navBurger');
@@ -227,22 +241,23 @@
     const list = cat === 'All' ? allCreators : allCreators.filter((c) => c.category === cat);
     grid.setAttribute('data-stagger-group', '');
     grid.innerHTML = list.map((c) => `
-      <article class="creator-card" data-stagger>
-        <div class="creator-media">
-          <span class="creator-cat">${c.category}</span>
-          <span class="creator-flag">${c.country}</span>
-          <img src="${c.img}" alt="${c.name}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#1a1240,#0a1a2e)';this.style.objectFit='cover'" />
-          <div class="creator-info">
-            <h3>${c.name}</h3>
-            <div class="handle">${c.handle}</div>
-            <div class="creator-foll"><i class="fas fa-users"></i> ${c.followers} followers</div>
-          </div>
+      <article class="creator-card" data-tilt data-stagger>
+        <div class="creator-glow"></div>
+        <span class="creator-cat"><i class="fas fa-circle"></i> ${c.category}</span>
+        <div class="creator-avatar-wrap">
+          <span class="creator-ring"></span>
+          <img class="creator-avatar" src="${c.img}" alt="${c.name}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#8b5cff,#39e0ff)'" />
         </div>
+        <h3>${c.name}</h3>
+        <div class="handle">${c.handle}</div>
+        <div class="creator-stat"><span class="creator-subs">${c.followers}</span><span class="creator-subs-label">subscribers</span></div>
+        <a class="creator-link" href="https://youtube.com/${c.handle}" target="_blank" rel="noopener"><i class="fab fa-youtube"></i> View Channel</a>
       </article>`).join('');
     requestAnimationFrame(() => {
       grid.querySelectorAll('[data-stagger]').forEach((el, i) => {
         setTimeout(() => el.classList.add('in'), i * 60);
       });
+      setupTilt();
     });
   }
   document.getElementById('creatorFilters').addEventListener('click', (e) => {
@@ -326,7 +341,7 @@
   const steps = [
     { step: 'Step 01', title: 'Discovery', desc: 'We deep-dive into your brand, audience and objectives to define what success looks like.' },
     { step: 'Step 02', title: 'Strategy', desc: 'A data-driven roadmap mapping the right markets, formats and creator archetypes.' },
-    { step: 'Step 03', title: 'Creator Selection', desc: 'We match you with vetted India & UK creators whose audience fits your brand.' },
+    { step: 'Step 03', title: 'Creator Selection', desc: 'We match you with vetted worldwide creators whose audience fits your brand.' },
     { step: 'Step 04', title: 'Campaign Launch', desc: 'Creative briefs, contracts and coordinated rollout — managed end to end.' },
     { step: 'Step 05', title: 'Reporting', desc: 'Transparent dashboards with real performance metrics and actionable insight.' }
   ];
@@ -388,67 +403,168 @@
     if (typeof THREE === 'undefined') return;
     const mount = document.getElementById('network-globe');
     if (!mount) return;
+    const label = document.getElementById('network-label');
     const w = () => mount.clientWidth, h = () => mount.clientHeight;
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(w(), h());
     mount.appendChild(renderer.domElement);
     const scene = new THREE.Scene();
-    const cam = new THREE.PerspectiveCamera(45, w() / h(), 0.1, 100);
+    const cam = new THREE.PerspectiveCamera(45, w() / h(), 0.1, 200);
     cam.position.z = 11;
-    scene.add(new THREE.AmbientLight(0x6060a0, 1.4));
-    const pl = new THREE.PointLight(0x8b5cff, 2, 50); pl.position.set(8, 6, 10); scene.add(pl);
+    scene.add(new THREE.AmbientLight(0x5560b0, 1.5));
+    const pl = new THREE.PointLight(0x8b5cff, 2.2, 60); pl.position.set(8, 6, 10); scene.add(pl);
+    const pl2 = new THREE.PointLight(0x39e0ff, 1.6, 60); pl2.position.set(-10, -4, 6); scene.add(pl2);
 
-    const grp = new THREE.Group(); scene.add(grp);
+    const root = new THREE.Group(); scene.add(root);    // tilt + drag
+    const grp = new THREE.Group(); root.add(grp);        // spinning earth
+    root.rotation.z = 0.36;
     const R = 3.4;
-    // wire sphere
-    grp.add(new THREE.Mesh(new THREE.SphereGeometry(R, 28, 28), new THREE.MeshBasicMaterial({ color: 0x3a2f7a, wireframe: true, transparent: true, opacity: 0.16 })));
-    grp.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.98, 32, 32), new THREE.MeshBasicMaterial({ color: 0x12102e, transparent: true, opacity: 0.4 })));
 
-    function toVec(lat, lon) {
+    /* ---- Starfield around globe ---- */
+    const starCount = 600;
+    const sp = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const rr = 14 + Math.random() * 22;
+      const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1);
+      sp[i*3] = rr * Math.sin(ph) * Math.cos(th);
+      sp[i*3+1] = rr * Math.sin(ph) * Math.sin(th);
+      sp[i*3+2] = rr * Math.cos(ph);
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0x9fb0ff, size: 0.08, transparent: true, opacity: 0.7 }));
+    scene.add(stars);
+
+    /* ---- Globe layers ---- */
+    // glowing atmosphere
+    const atmo = new THREE.Mesh(new THREE.SphereGeometry(R * 1.18, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0x5a6bff, transparent: true, opacity: 0.07, side: THREE.BackSide }));
+    grp.add(atmo);
+    // solid dark core
+    grp.add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.985, 48, 48),
+      new THREE.MeshPhongMaterial({ color: 0x0d0b24, emissive: 0x140f33, shininess: 30, transparent: true, opacity: 0.92 })));
+    // lat/long wire grid
+    const grid = new THREE.Mesh(new THREE.SphereGeometry(R, 36, 24),
+      new THREE.MeshBasicMaterial({ color: 0x4a3fa0, wireframe: true, transparent: true, opacity: 0.18 }));
+    grp.add(grid);
+
+    // dotted "land" point cloud on the sphere surface for a globe-of-dots look
+    const dotCount = 1400;
+    const dp = new Float32Array(dotCount * 3);
+    const off = 2 / dotCount, inc = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < dotCount; i++) {
+      const y = i * off - 1 + off / 2; const rad = Math.sqrt(1 - y*y); const phi = i * inc;
+      dp[i*3] = Math.cos(phi) * rad * R; dp[i*3+1] = y * R; dp[i*3+2] = Math.sin(phi) * rad * R;
+    }
+    const dotGeo = new THREE.BufferGeometry();
+    dotGeo.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+    const dotMat = new THREE.PointsMaterial({ color: 0x6c79d6, size: 0.045, transparent: true, opacity: 0.45 });
+    grp.add(new THREE.Points(dotGeo, dotMat));
+
+    function toVec(lat, lon, mul = 1) {
       const phi = (90 - lat) * Math.PI / 180;
       const theta = (lon + 180) * Math.PI / 180;
-      return new THREE.Vector3(-R * Math.sin(phi) * Math.cos(theta), R * Math.cos(phi), R * Math.sin(phi) * Math.sin(theta));
+      return new THREE.Vector3(-R*mul*Math.sin(phi)*Math.cos(theta), R*mul*Math.cos(phi), R*mul*Math.sin(phi)*Math.sin(theta));
     }
 
+    /* ---- City pins (raycastable for hover labels) ---- */
+    const palette = [0x39e0ff, 0xb388ff, 0xff5ce0, 0x6aa6ff];
     const pins = [];
-    nodes.forEach((n) => {
+    nodes.forEach((n, i) => {
       const v = toVec(n.lat, n.lon);
-      const color = n.country === 'IN' ? 0xff9f1c : 0x39e0ff;
-      const m = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 12), new THREE.MeshBasicMaterial({ color }));
-      m.position.copy(v); grp.add(m);
-      const halo = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.3 }));
+      const color = n.hub ? 0xffd166 : palette[i % palette.length];
+      const core = new THREE.Mesh(new THREE.SphereGeometry(n.hub ? 0.12 : 0.085, 14, 14), new THREE.MeshBasicMaterial({ color }));
+      core.position.copy(v); core.userData = { city: n.city, country: n.country }; grp.add(core);
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(n.hub ? 0.26 : 0.18, 14, 14), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.28 }));
       halo.position.copy(v); grp.add(halo);
-      pins.push({ v, halo, base: 0.2 });
+      // expanding ripple ring on the surface
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.16, 0.2, 24), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.6, side: THREE.DoubleSide }));
+      ring.position.copy(v); ring.lookAt(0, 0, 0); grp.add(ring);
+      pins.push({ v, halo, core, ring, color, phase: Math.random() * Math.PI * 2 });
     });
 
-    // connection arcs between IN and UK clusters
-    const inNodes = nodes.filter((n) => n.country === 'IN').map((n) => toVec(n.lat, n.lon));
-    const ukNodes = nodes.filter((n) => n.country === 'UK').map((n) => toVec(n.lat, n.lon));
+    /* ---- Connection arcs between many nodes ---- */
+    const verts = nodes.map((n) => toVec(n.lat, n.lon));
     const arcs = [];
-    inNodes.forEach((a) => ukNodes.forEach((b) => {
-      const mid = a.clone().add(b).multiplyScalar(0.5).normalize().multiplyScalar(R * 1.5);
-      const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
-      const geo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(40));
-      const mat = new THREE.LineBasicMaterial({ color: 0x8b5cff, transparent: true, opacity: 0.35 });
-      const line = new THREE.Line(geo, mat);
-      grp.add(line);
-      // traveling pulse
-      const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), new THREE.MeshBasicMaterial({ color: 0xb388ff }));
-      grp.add(pulse);
-      arcs.push({ curve, pulse, t: Math.random() });
-    }));
+    // connect each node to 2 others (hubs get more) for a dense worldwide web
+    nodes.forEach((n, i) => {
+      const links = n.hub ? 5 : 2;
+      for (let k = 1; k <= links; k++) {
+        const j = (i + k * 3 + 1) % nodes.length;
+        if (j === i) continue;
+        const a = verts[i], b = verts[j];
+        const dist = a.distanceTo(b);
+        const mid = a.clone().add(b).multiplyScalar(0.5).normalize().multiplyScalar(R * (1.15 + dist * 0.12));
+        const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
+        const pts = curve.getPoints(50);
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const col = palette[(i + j) % palette.length];
+        const mat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending });
+        grp.add(new THREE.Line(geo, mat));
+        const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        grp.add(pulse);
+        arcs.push({ curve, pulse, t: Math.random(), speed: 0.004 + Math.random() * 0.006, mat });
+      }
+    });
 
-    let raf;
+    /* ---- Interaction: drag to spin + mouse parallax tilt + hover labels ---- */
+    let dragging = false, lastX = 0, lastY = 0, velY = 0.003, velX = 0;
+    let tiltX = 0.1, tiltY = 0, targetTiltX = 0.1, targetTiltY = 0;
+    const ray = new THREE.Raycaster(); const mouse = new THREE.Vector2(); let hoverEl = null;
+
+    mount.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; mount.style.cursor = 'grabbing'; });
+    window.addEventListener('pointerup', () => { dragging = false; mount.style.cursor = 'grab'; });
+    mount.addEventListener('pointermove', (e) => {
+      const r = mount.getBoundingClientRect();
+      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      targetTiltY = mouse.x * 0.3; targetTiltX = 0.1 - mouse.y * 0.25;
+      if (dragging) {
+        velY = (e.clientX - lastX) * 0.005;
+        velX = (e.clientY - lastY) * 0.004;
+        grp.rotation.y += velY; grp.rotation.x = Math.max(-0.6, Math.min(0.6, grp.rotation.x + velX));
+        lastX = e.clientX; lastY = e.clientY;
+      }
+      // hover detect
+      ray.setFromCamera(mouse, cam);
+      const hits = ray.intersectObjects(pins.map((p) => p.core));
+      if (hits.length && label) {
+        const d = hits[0].object.userData;
+        label.textContent = d.city + ' · ' + d.country;
+        label.style.left = (e.clientX - r.left) + 'px';
+        label.style.top = (e.clientY - r.top) + 'px';
+        label.classList.add('show');
+        hoverEl = hits[0].object;
+      } else if (label) { label.classList.remove('show'); hoverEl = null; }
+    });
+    mount.style.cursor = 'grab';
+
+    let visible = true;
+    new IntersectionObserver((ents) => { visible = ents[0].isIntersecting; }, { threshold: 0.01 }).observe(mount);
+
     function render() {
-      raf = requestAnimationFrame(render);
-      grp.rotation.y += 0.0022;
-      const time = performance.now() * 0.002;
-      pins.forEach((p, i) => { const s = 1 + Math.sin(time + i) * 0.25; p.halo.scale.setScalar(s); });
+      requestAnimationFrame(render);
+      if (!visible) return;
+      const time = performance.now() * 0.001;
+      if (!dragging && !reduceMotion) { grp.rotation.y += velY; velY += (0.003 - velY) * 0.02; }
+      tiltX += (targetTiltX - tiltX) * 0.05; tiltY += (targetTiltY - tiltY) * 0.05;
+      root.rotation.x = tiltX; root.rotation.y = tiltY;
+      stars.rotation.y -= 0.0004;
+      atmo.material.opacity = 0.07 + Math.sin(time * 1.5) * 0.02;
+
+      pins.forEach((p) => {
+        const s = 1 + Math.sin(time * 2 + p.phase) * 0.3;
+        p.halo.scale.setScalar(s);
+        const rs = 1 + ((time * 0.6 + p.phase) % 1.4);
+        p.ring.scale.setScalar(rs);
+        p.ring.material.opacity = Math.max(0, 0.6 - (rs - 1) * 0.45);
+        p.core.scale.setScalar(p.core === hoverEl ? 1.8 : 1);
+      });
       arcs.forEach((a) => {
-        a.t += 0.006; if (a.t > 1) a.t = 0;
-        const pt = a.curve.getPoint(a.t);
-        a.pulse.position.copy(pt);
+        a.t += a.speed; if (a.t > 1) a.t = 0;
+        a.pulse.position.copy(a.curve.getPoint(a.t));
+        a.pulse.scale.setScalar(0.7 + Math.sin(a.t * Math.PI) * 0.8);
       });
       renderer.render(scene, cam);
     }

@@ -7,8 +7,11 @@ smooth scrolling, and a futuristic dark aesthetic.
 
 ## Project Overview
 - **Name**: Creator Link Up
-- **Goal**: Position Creator Link Up as a world-class influencer marketing agency and
-  convert visitors into brand clients and creator applicants.
+- **Goal**: Position Creator Link Up as a world-class **worldwide** influencer marketing
+  agency and convert visitors into brand clients and creator applicants.
+- **Contact**: Email `support@creatorlinkup.in` · Discord `https://discord.gg/eKaGpD6r8Z`
+- **Featured Creators**: SenpaiSpider (2.51M), Psd1 (1.09M), Stevee (244K), Fynox (164K),
+  Triggered Boy (135K), Its Water (29.8K) — real profile images included.
 - **Aesthetic**: Dark theme · purple/blue neon · glassmorphism · animated gradients ·
   Three.js 3D · cinematic GSAP scroll choreography.
 
@@ -29,8 +32,10 @@ smooth scrolling, and a futuristic dark aesthetic.
 - **Brand Testimonials** — auto-scrolling marquee carousel of brand results (pauses on hover).
 - **Campaign Process** — animated vertical timeline with scroll-linked progress line
   (Discovery → Strategy → Creator Selection → Campaign Launch → Reporting).
-- **Creator Network** — interactive 3D mini-globe showing India & UK locations with
-  pulsing pins and animated connection arcs + traveling light pulses.
+- **Creator Network** — interactive, **drag-to-spin** 3D worldwide globe (12+ markets,
+  6 continents) with a dotted globe surface, lat/long grid, glowing atmosphere, starfield,
+  pulsing/rippling city pins, hover city labels, and dense animated connection arcs with
+  traveling light pulses. Auto-orbits with momentum + mouse-parallax tilt.
 - **Success Stories** — premium case-study cards with performance metrics and 3D tilt.
 - **Contact** — luxury glass form with floating labels and animated async submit.
 - Responsive across desktop / tablet / mobile, plus `prefers-reduced-motion` support.
