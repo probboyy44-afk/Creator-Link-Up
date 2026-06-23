@@ -588,18 +588,34 @@
       message: document.getElementById('cf-message').value.trim()
     };
     status.textContent = ''; status.className = 'form-status';
+    if (!payload.name || !payload.email || !payload.message) {
+      status.textContent = 'Please fill in your name, email and message.'; status.classList.add('err');
+      return;
+    }
     btn.classList.add('is-loading');
+    const mailtoFallback = () => {
+      const subject = encodeURIComponent('New enquiry from ' + payload.name + (payload.company ? ' (' + payload.company + ')' : ''));
+      const body = encodeURIComponent('Name: ' + payload.name + '\nEmail: ' + payload.email + (payload.company ? '\nBrand/Handle: ' + payload.company : '') + '\n\n' + payload.message);
+      window.location.href = 'mailto:support@creatorlinkup.in?subject=' + subject + '&body=' + body;
+      status.textContent = 'Opening your email app… or reach us directly at support@creatorlinkup.in';
+      status.classList.add('ok');
+      form.reset();
+    };
     try {
+      // Works on dynamic hosts (Hono server). On pure-static hosts the POST
+      // hits a prerendered GET file (405/404) and we fall back to email.
       const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const json = await res.json();
-      if (res.ok && json.ok) {
+      let json = null; try { json = await res.json(); } catch (_) {}
+      if (res.ok && json && json.ok) {
         status.textContent = json.message; status.classList.add('ok');
         form.reset();
+      } else if (json && json.error) {
+        status.textContent = json.error; status.classList.add('err');
       } else {
-        status.textContent = json.error || 'Something went wrong.'; status.classList.add('err');
+        mailtoFallback();
       }
     } catch {
-      status.textContent = 'Network error. Please try again.'; status.classList.add('err');
+      mailtoFallback();
     } finally {
       btn.classList.remove('is-loading');
     }

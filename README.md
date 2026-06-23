@@ -90,10 +90,19 @@ pm2 start ecosystem.config.cjs # serve at http://localhost:3000 via wrangler pag
 curl http://localhost:3000     # smoke test
 ```
 
-## Deployment
-- **Platform**: Cloudflare Pages
-- **Status**: ✅ Built & running locally (sandbox). Ready for Cloudflare Pages deploy.
-- **Last Updated**: 2026-06-19
+## Deployment (works on ALL hosting)
+Run `npm run build:static` → deploy the `dist/` folder. See **[DEPLOYMENT.md](./DEPLOYMENT.md)**
+for step-by-step instructions per platform. Supported out of the box:
+- **Cloudflare Pages** (`wrangler.jsonc`) — dynamic worker, recommended
+- **Vercel** (`vercel.json`)
+- **Netlify** (`netlify.toml`)
+- **GitHub Pages** (`.github/workflows/deploy-pages.yml`)
+- **Render** (`render.yaml`), **Railway** (`railway.json`)
+- **Docker / Fly.io / any VPS** (`Dockerfile`, `server.mjs`)
+- **Plain static hosts** (S3, nginx, Firebase) — prerendered `index.html` + `/api/*` JSON
+
+- **Status**: ✅ Builds clean (no errors). Verified on Cloudflare worker + Node server.
+- **Last Updated**: 2026-06-21
 
 ## Not Yet Implemented / Next Steps
 - Persist contact submissions (Cloudflare D1 or KV) + email/CRM notification.

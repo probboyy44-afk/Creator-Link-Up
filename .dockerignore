@@ -1,0 +1,7 @@
+node_modules
+dist
+.wrangler
+.git
+*.log
+.pm2
+npm-debug.log*

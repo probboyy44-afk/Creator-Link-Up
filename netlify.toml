@@ -1,0 +1,23 @@
+[build]
+  command = "npm run build:static"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Serve prerendered API JSON with the correct content type
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# SPA-style fallback for any unknown route (don't touch /api or /static)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

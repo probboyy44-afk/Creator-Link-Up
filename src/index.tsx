@@ -107,7 +107,11 @@ const PAGE = `<!DOCTYPE html>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Creator Link Up — Connecting Brands With Exceptional Creators</title>
-<meta name="description" content="Creator Link Up is a premium influencer marketing agency connecting brands with top creators across India and the UK." />
+<meta name="description" content="Creator Link Up is a premium influencer marketing agency connecting brands with top creators worldwide — campaign strategy, brand deals, gaming &amp; Minecraft creators and performance reporting." />
+<meta property="og:title" content="Creator Link Up — Connecting Brands With Exceptional Creators" />
+<meta property="og:description" content="Premium worldwide influencer marketing agency. We connect brands with top creators and run complete campaigns end to end." />
+<meta property="og:type" content="website" />
+<meta name="theme-color" content="#05050a" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />

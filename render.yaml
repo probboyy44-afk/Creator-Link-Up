@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: creator-link-up
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build:static
+    startCommand: node --import tsx server.mjs
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PORT
+        value: "3000"

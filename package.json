@@ -1,19 +1,33 @@
 {
-  "name": "webapp",
+  "name": "creator-link-up",
+  "version": "1.0.0",
+  "description": "Creator Link Up — premium 3D worldwide influencer marketing agency website (Hono + Three.js + GSAP).",
   "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "wrangler pages dev",
-    "deploy": "npm run build && wrangler pages deploy",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "build:static": "vite build && tsx scripts/prerender.mjs",
+    "postbuild:cf": "tsx scripts/copy-cf.mjs",
+    "prerender": "tsx scripts/prerender.mjs",
+    "preview": "npm run build:static && npx serve dist",
+    "start": "node --import tsx server.mjs",
+    "start:node": "node --import tsx server.mjs",
+    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy:cf": "npm run build && wrangler pages deploy dist --project-name creator-link-up",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "clean-port": "fuser -k 3000/tcp 2>/dev/null || true"
   },
   "dependencies": {
     "hono": "^4.12.23"
   },
   "devDependencies": {
+    "@hono/node-server": "^1.19.14",
     "@hono/vite-build": "^1.2.0",
     "@hono/vite-dev-server": "^0.25.2",
+    "tsx": "^4.22.4",
     "vite": "^6.3.5",
     "wrangler": "^4.4.0"
   }
