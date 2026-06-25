@@ -27,9 +27,9 @@ smooth scrolling, and a futuristic dark aesthetic.
 - **Services** — 10 interactive 3D-tilt glass cards with neon hover glow and reveal animations.
 - **Featured Creators** — filterable showcase (All / Gaming / GTA / IRL / Lifestyle) with
   hover zoom and premium gradient portrait cards.
-- **Voice Testimonials** — real, playable AI-generated voice reviews with animated sound-wave
-  visualization (only one plays at a time).
-- **Brand Testimonials** — auto-scrolling marquee carousel of brand results (pauses on hover).
+- **Network Feedback** — toggle between **Creator Reviews** and **Brand Reviews**, each an
+  auto-scrolling marquee carousel (pauses on hover). Creator reviews show real creators with
+  verified badges, subscriber counts and their comments.
 - **Campaign Process** — animated vertical timeline with scroll-linked progress line
   (Discovery → Strategy → Creator Selection → Campaign Launch → Reporting).
 - **Creator Network** — interactive, **drag-to-spin** 3D worldwide globe (12+ markets,
@@ -48,19 +48,18 @@ smooth scrolling, and a futuristic dark aesthetic.
 - `GET /api/stats` — headline statistics.
 - `GET /api/services` — service offerings (icon, title, desc).
 - `GET /api/creators` — featured creators (name, handle, category, followers, country, img).
-- `GET /api/voice-testimonials` — voice reviews (name, role, img, audio, quote).
+- `GET /api/creator-reviews` — creator reviews (name, subs, quote, verified).
 - `GET /api/brand-testimonials` — brand results (brand, result, quote, logo).
 - `GET /api/case-studies` — success stories (title, metric, tags, desc).
-- `GET /api/network` — India/UK network nodes (city, country, lat, lon).
+- `GET /api/network` — worldwide network nodes (city, country, lat, lon, hub).
 - `POST /api/contact` — contact form. Body: `{ name, email, company?, message }` → `{ ok, message }`.
 
 ### Static Assets
 - `/static/style.css`, `/static/globe.js`, `/static/app.js`, `/static/favicon.svg`
-- `/static/img/creator-*.svg`, `/static/img/voice-*.svg`
-- `/static/audio/voice-1.mp3 … voice-3.mp3` (real AI-generated voice testimonials)
+- `/static/img/creators/*.jpg` (real creator profile images)
 
 ## Data Architecture
-- **Data Models**: Stats, Services, Creators, VoiceTestimonials, BrandTestimonials,
+- **Data Models**: Stats, Services, Creators, CreatorReviews, BrandTestimonials,
   CaseStudies, NetworkNodes, ContactSubmission.
 - **Storage**: Content is served from in-worker static data (read-only marketing content).
   No persistent database is required for the current scope. Contact submissions are
@@ -72,8 +71,8 @@ smooth scrolling, and a futuristic dark aesthetic.
 1. Open the site — the preloader plays, then the hero appears with the 3D globe.
 2. Scroll slowly to watch the globe travel and morph between sections.
 3. Use the **creator filter chips** to filter the roster by category.
-4. In **Voice Testimonials**, press ▶ on a card to hear a real voice review; the sound-wave
-   animates while playing.
+4. In **Network Feedback**, switch between Creator Reviews and Brand Reviews tabs to browse
+   the auto-scrolling review carousels.
 5. Fill in the **Contact** form and submit to get an instant confirmation message.
 
 ## Tech Stack

@@ -8,10 +8,10 @@ app.use('/api/*', cors())
 /* ----------------------------- Data ----------------------------- */
 
 const stats = [
-  { id: 'creators', label: 'Creators Worldwide', value: 4200, suffix: '+' },
-  { id: 'campaigns', label: 'Campaigns Managed', value: 860, suffix: '+' },
-  { id: 'reach', label: 'Audience Reach', value: 1.4, suffix: 'B', decimals: 1 },
-  { id: 'brands', label: 'Brand Partnerships', value: 320, suffix: '+' }
+  { id: 'creators', label: 'Creators Worldwide', value: 50, suffix: '+' },
+  { id: 'campaigns', label: 'Campaigns Managed', value: 60, suffix: '+' },
+  { id: 'reach', label: 'Audience Reach', value: 1000, suffix: '+' },
+  { id: 'brands', label: 'Brand Partnerships', value: 20, suffix: '+' }
 ]
 
 const services = [
@@ -36,10 +36,12 @@ const creators = [
   { name: 'Its Water', handle: '@ItsWater', category: 'Minecraft', followers: '29.8K', img: '/static/img/creators/itswater.jpg' }
 ]
 
-const voiceTestimonials = [
-  { name: 'Priya Nair', role: 'Lifestyle Creator · 1.8M', img: '/static/img/voice-1.svg', audio: '/static/audio/voice-1.mp3', quote: 'They unlocked brand deals I never thought were possible.' },
-  { name: 'James Whitlock', role: 'Gaming Creator · 920K', img: '/static/img/voice-2.svg', audio: '/static/audio/voice-2.mp3', quote: 'The most professional agency I have ever worked with.' },
-  { name: 'Anaya Singh', role: 'Minecraft Creator · 3.1M', img: '/static/img/voice-3.svg', audio: '/static/audio/voice-3.mp3', quote: 'Every campaign felt premium from start to finish.' }
+const creatorReviews = [
+  { name: 'Sleepy Dude', subs: '6K subscribers', quote: 'Soo Good!', verified: true },
+  { name: 'Samnuzz', subs: '304K subscribers', quote: 'G.O.A.T.', verified: true },
+  { name: 'Yug Playz', subs: '1M subscribers', quote: 'Yaar 10/10 work', verified: true },
+  { name: '1Alphaa1', subs: '7.85K subscribers', quote: 'the edit is tooo good ❤️', verified: true },
+  { name: 'KillerP', subs: '4.80K subscribers', quote: 'Super Cool 10/10', verified: true }
 ]
 
 const brandTestimonials = [
@@ -77,7 +79,7 @@ const networkNodes = [
 app.get('/api/stats', (c) => c.json(stats))
 app.get('/api/services', (c) => c.json(services))
 app.get('/api/creators', (c) => c.json(creators))
-app.get('/api/voice-testimonials', (c) => c.json(voiceTestimonials))
+app.get('/api/creator-reviews', (c) => c.json(creatorReviews))
 app.get('/api/brand-testimonials', (c) => c.json(brandTestimonials))
 app.get('/api/case-studies', (c) => c.json(caseStudies))
 app.get('/api/network', (c) => c.json(networkNodes))
@@ -138,7 +140,7 @@ const PAGE = `<!DOCTYPE html>
     <nav class="nav-links">
       <a href="#services">Services</a>
       <a href="#creators">Creators</a>
-      <a href="#voices">Voices</a>
+      <a href="#feedback">Reviews</a>
       <a href="#process">Process</a>
       <a href="#network">Network</a>
       <a href="#cases">Stories</a>
@@ -173,7 +175,7 @@ const PAGE = `<!DOCTYPE html>
             <img src="/static/img/creators/stevee.jpg" alt="Stevee" />
             <img src="/static/img/creators/triggeredboy.jpg" alt="Triggered Boy" />
           </div>
-          <span class="hero-trust-text">Trusted by <strong>4,200+</strong> creators worldwide</span>
+          <span class="hero-trust-text">Trusted by <strong>50+</strong> creators worldwide</span>
         </div>
       </div>
       <div class="scroll-hint"><span>Scroll to explore</span><i class="fas fa-chevron-down"></i></div>
@@ -211,23 +213,20 @@ const PAGE = `<!DOCTYPE html>
       <div class="creators-grid" id="creatorsGrid"></div>
     </section>
 
-    <!-- VOICE TESTIMONIALS -->
-    <section id="voices" class="section voices">
-      <div class="section-head">
-        <span class="kicker">In Their Own Words</span>
-        <h2 class="section-title">Voice <span class="grad">Testimonials</span></h2>
-        <p class="section-lead">Press play to hear real creators share their experience.</p>
+    <!-- NETWORK FEEDBACK -->
+    <section id="feedback" class="section feedback">
+      <div class="feedback-head">
+        <div>
+          <span class="kicker">The Database Of Success</span>
+          <h2 class="section-title">Network <span class="grad">Feedback</span></h2>
+        </div>
+        <div class="feedback-toggle" id="feedbackToggle">
+          <button class="feedback-tab active" data-tab="creators">Creator Reviews</button>
+          <button class="feedback-tab" data-tab="brands">Brand Reviews</button>
+        </div>
       </div>
-      <div class="voices-grid" id="voicesGrid"></div>
-    </section>
-
-    <!-- BRAND TESTIMONIALS -->
-    <section id="brands" class="section brands">
-      <div class="section-head">
-        <span class="kicker">Trusted By Brands</span>
-        <h2 class="section-title">Results that <span class="grad">speak</span></h2>
-      </div>
-      <div class="marquee" id="brandMarquee"><div class="marquee-track" id="brandTrack"></div></div>
+      <div class="marquee" id="creatorReviewMarquee"><div class="marquee-track" id="creatorReviewTrack"></div></div>
+      <div class="marquee" id="brandMarquee" hidden><div class="marquee-track" id="brandTrack"></div></div>
     </section>
 
     <!-- PROCESS -->

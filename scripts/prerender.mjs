@@ -33,7 +33,7 @@ await dump('/', '404.html')
 
 // 2) API endpoints as static JSON (GET only). The frontend reads these as
 //    /api/<name> ; we emit both /api/<name> and /api/<name>.json for safety.
-const apis = ['stats', 'services', 'creators', 'voice-testimonials', 'brand-testimonials', 'case-studies', 'network']
+const apis = ['stats', 'services', 'creators', 'creator-reviews', 'brand-testimonials', 'case-studies', 'network']
 for (const name of apis) {
   await dump('/api/' + name, 'api/' + name)
 }

@@ -97,11 +97,11 @@
       .to(st, { posX: -6, posY: -1.5, posZ: -4, scale: 0.7, opacity: 0.55, extraRotY: 0.4, ease: 'power1.inOut' })
       // services -> creators: cross to right, smaller, dim (cards are busy)
       .to(st, { posX: 6.5, posY: 0, posZ: -6, scale: 0.6, opacity: 0.4, ease: 'power1.inOut' })
-      // creators -> voices: back toward center-left
+      // creators -> feedback: back toward center-left
       .to(st, { posX: -5.5, posY: -1, posZ: -3, scale: 0.7, opacity: 0.55, extraRotX: 0.2, ease: 'power1.inOut' })
-      // voices -> brands: rise, center
+      // feedback -> process: rise, center then drift right along timeline
       .to(st, { posX: 0, posY: 1, posZ: -5, scale: 0.75, opacity: 0.45, ease: 'power1.inOut' })
-      // brands -> process: drift right along timeline
+      // process: drift right along timeline
       .to(st, { posX: 6, posY: 0, posZ: -4, scale: 0.65, opacity: 0.5, ease: 'power1.inOut' })
       // process -> network: fade out (network has its own globe)
       .to(st, { posX: 0, posY: 0, posZ: -8, scale: 0.5, opacity: 0, ease: 'power1.inOut' })
@@ -268,64 +268,31 @@
     renderCreators(btn.dataset.cat);
   });
 
-  // VOICE TESTIMONIALS
-  api('/api/voice-testimonials').then((data) => {
+  // CREATOR REVIEWS marquee (duplicate for seamless loop)
+  api('/api/creator-reviews').then((data) => {
     if (!data) return;
-    const grid = document.getElementById('voicesGrid');
-    grid.setAttribute('data-stagger-group', '');
-    grid.innerHTML = data.map((v, i) => `
-      <article class="voice-card" data-stagger id="voice-${i}">
-        <div class="voice-top">
-          <img class="voice-avatar" src="${v.img}" alt="${v.name}" loading="lazy" onerror="this.style.background='linear-gradient(135deg,#8b5cff,#39e0ff)'" />
-          <div class="voice-meta"><h4>${v.name}</h4><span>${v.role}</span></div>
+    const track = document.getElementById('creatorReviewTrack');
+    if (!track) return;
+    const initial = (n) => (n.trim()[0] || 'C').toUpperCase();
+    const cardHtml = (r) => `
+      <article class="review-card">
+        <div class="review-head">
+          <div class="review-avatar">${initial(r.name)}</div>
+          <div class="review-meta">
+            <div class="review-name">${r.name}${r.verified ? ' <i class="fas fa-circle-check review-verified" aria-label="Verified"></i>' : ''}</div>
+            <div class="review-subs">${r.subs}</div>
+          </div>
         </div>
-        <p class="voice-quote">“${v.quote}”</p>
-        <div class="voice-player">
-          <button class="voice-play" data-audio="${v.audio}" data-card="voice-${i}" aria-label="Play review"><i class="fas fa-play"></i></button>
-          <div class="voice-wave">${Array.from({ length: 28 }).map(() => '<span></span>').join('')}</div>
-        </div>
-      </article>`).join('');
-    setupReveals();
-    setupVoicePlayers();
+        <p class="review-quote">${r.quote}</p>
+      </article>`;
+    track.innerHTML = (data.map(cardHtml).join('')) + (data.map(cardHtml).join(''));
   });
 
-  function setupVoicePlayers() {
-    let current = null;
-    document.querySelectorAll('.voice-play').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const card = document.getElementById(btn.dataset.card);
-        if (current && current.btn !== btn) resetPlayer(current);
-        if (!btn._audio) {
-          btn._audio = new Audio(btn.dataset.audio);
-          btn._audio.addEventListener('ended', () => resetPlayer({ btn, card }));
-          btn._audio.addEventListener('error', () => { resetPlayer({ btn, card }); });
-        }
-        if (btn._audio.paused) {
-          btn._audio.play().catch(() => {});
-          btn.innerHTML = '<i class="fas fa-pause"></i>';
-          card.classList.add('playing');
-          // randomize wave bar speeds
-          card.querySelectorAll('.voice-wave span').forEach((s) => s.style.animationDelay = (Math.random() * 0.6) + 's');
-          current = { btn, card };
-        } else {
-          btn._audio.pause();
-          resetPlayer({ btn, card });
-        }
-      });
-    });
-    function resetPlayer(o) {
-      if (!o) return;
-      o.btn.innerHTML = '<i class="fas fa-play"></i>';
-      o.card.classList.remove('playing');
-      if (o.btn._audio) { o.btn._audio.pause(); o.btn._audio.currentTime = 0; }
-      if (current && current.btn === o.btn) current = null;
-    }
-  }
-
-  // BRAND TESTIMONIALS marquee (duplicate for seamless loop)
+  // BRAND REVIEWS marquee (duplicate for seamless loop)
   api('/api/brand-testimonials').then((data) => {
     if (!data) return;
     const track = document.getElementById('brandTrack');
+    if (!track) return;
     const cardHtml = (b) => `
       <article class="brand-card">
         <div class="brand-head">
@@ -336,6 +303,23 @@
       </article>`;
     track.innerHTML = (data.map(cardHtml).join('')) + (data.map(cardHtml).join(''));
   });
+
+  // FEEDBACK tab toggle
+  (function setupFeedbackToggle() {
+    const toggle = document.getElementById('feedbackToggle');
+    const creatorM = document.getElementById('creatorReviewMarquee');
+    const brandM = document.getElementById('brandMarquee');
+    if (!toggle || !creatorM || !brandM) return;
+    toggle.querySelectorAll('.feedback-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        toggle.querySelectorAll('.feedback-tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        const showBrands = tab.dataset.tab === 'brands';
+        brandM.hidden = !showBrands;
+        creatorM.hidden = showBrands;
+      });
+    });
+  })();
 
   // PROCESS timeline
   const steps = [
